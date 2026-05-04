@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNNU Business Card Template</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0d2750;
+    --accent: #2d7dd2;
+    --text:   #1a1a2e;
+    --muted:  #5a6478;
+    --white:  #ffffff;
+    --card-w: 680px;
+    --card-h: 388px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #e8ecf3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 40px 20px;
+  }
+
+  /* ── Export button ───────────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-export {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    background: #0d2750;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-export:hover { background: #1a3d6e; }
+  .btn-export svg { width: 15px; height: 15px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  .hint {
+    color: #8a96ae;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Flip mechanics ──────────────────────────────────────── */
+  .card-scene {
+    width: min(var(--card-w), 95vw);
+    height: calc(min(var(--card-w), 95vw) * 0.571);
+    perspective: 1400px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+    border-radius: 10px;
+    box-shadow:
+      0 2px 4px rgba(13,39,80,0.08),
+      0 8px 32px rgba(13,39,80,0.14),
+      0 24px 64px rgba(13,39,80,0.08);
+  }
+
+  .card-scene:hover .card-inner,
+  .card-scene.flipped .card-inner { transform: rotateY(180deg); }
+
+  .front, .back {
+    position: absolute; inset: 0;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+  }
+
+  /* FRONT */
+  .front {
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 38px 44px 32px;
+  }
+
+  .front-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .front-top-left { display: flex; flex-direction: column; gap: 16px; }
+
+  .qr-wrap { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .qr-wrap img { width: 68px; height: 68px; display: block; }
+
+  .card-name {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 36px; font-weight: 700;
+    color: var(--navy); line-height: 1.05; letter-spacing: -0.01em;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+  }
+
+  .card-meta { display: flex; flex-direction: column; gap: 4px; }
+  .card-title { font-size: 15px; font-weight: 500; color: var(--text); letter-spacing: 0.01em; }
+  .card-institution { font-size: 14px; color: var(--muted); font-weight: 300; }
+  .card-dept { font-size: 13px; color: var(--muted); font-weight: 300; margin-top: 1px; }
+
+  .card-research {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-style: italic; font-size: 16px; color: #3d4f70; line-height: 1.5;
+  }
+
+  .card-contacts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; }
+  .card-contacts .contact-item:nth-child(even) { justify-self: end; }
+
+  .contact-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--muted);
+    text-decoration: none; transition: color 0.2s; min-width: 0;
+  }
+  .contact-item:hover { color: var(--accent); }
+  .contact-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .contact-icon { width: 15px; height: 15px; flex-shrink: 0; fill: currentColor; opacity: 0.65; }
+
+  /* BACK */
+  .back {
+    transform: rotateY(180deg);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .back-logo { width: 68%; max-width: 440px; display: block; }
+
+  /* ── Print ───────────────────────────────────────────────── */
+  .print-side { display: none; }
+
+  @media print {
+    @page { size: 88.9mm 50.8mm; margin: 0; }
+
+    body { background: white; padding: 0; margin: 0; }
+    .toolbar, .hint, .card-scene { display: none !important; }
+
+    .print-side {
+      display: flex;
+      width: 88.9mm; height: 50.8mm;
+      page-break-after: always;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .print-front {
+      background: white;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 5.5mm 8mm 5.5mm;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .print-front .front-top {
+      display: flex; flex-direction: row;
+      justify-content: space-between; align-items: flex-start;
+    }
+
+    .print-front .front-top-left { display: flex; flex-direction: column; gap: 1.2mm; }
+
+    .print-front .card-name {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 10pt; font-weight: 700; color: #0d2750;
+      text-decoration: underline; text-decoration-color: #2d7dd2;
+      text-underline-offset: 1.5pt; line-height: 1.1;
+    }
+
+    .print-front .card-title       { font-size: 6pt; font-weight: 500; color: #1a1a2e; }
+    .print-front .card-institution { font-size: 5.5pt; color: #5a6478; font-weight: 300; }
+    .print-front .card-dept        { font-size: 5pt; color: #5a6478; font-weight: 300; }
+
+    .print-front .card-research {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic; font-size: 6pt; color: #3d4f70; line-height: 1.35;
+    }
+
+    .print-front .qr-wrap img { width: 14mm; height: 14mm; display: block; }
+
+    .print-front .card-contacts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8mm 6mm; }
+
+    .print-front .contact-item {
+      display: flex; align-items: center; gap: 1.2mm;
+      font-size: 5pt; color: #5a6478; text-decoration: none;
+    }
+    .print-front .contact-item.right { justify-self: end; }
+    .print-front .contact-icon { width: 2mm; height: 2mm; fill: #5a6478; opacity: 0.7; flex-shrink: 0; }
+
+    .print-back { background: white; align-items: center; justify-content: center; }
+    .print-back img { width: 65%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Toolbar ── -->
+<div class="toolbar">
+  <button class="btn-export" onclick="window.print()">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Export PDF
+  </button>
+</div>
+
+<p class="hint">Hover or click card to flip</p>
+
+<!-- ── Interactive flip card ── -->
+<div class="card-scene" onclick="this.classList.toggle('flipped')">
+  <div class="card-inner">
+
+    <!-- FRONT -->
+    <div class="front">
+      <div class="front-top">
+        <div class="front-top-left">
+          <!-- EDIT: Your name -->
+          <div class="card-name">Your Name</div>
+          <!-- EDIT: Title & affiliations -->
+          <div class="card-meta">
+            <div class="card-title">Ph.D. Student &middot; Research Associate</div>
+            <div class="card-institution">Saarland University &amp; HTW Saar</div>
+            <div class="card-dept">Systems Neuroscience &amp; Neurotechnology Unit</div>
+          </div>
+          <!-- EDIT: Research description -->
+          <div class="card-research">
+            Affective computing, psychophysiological signal estimation &amp; neural biomarkers
+          </div>
+        </div>
+        <div class="qr-wrap">
+          <img src="data:image/png;base64,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" alt="Instagram QR">
+        </div>
+      </div>
+      <!-- EDIT: Contact details -->
+      <div class="card-contacts">
+        <a class="contact-item" href="mailto:you@uni-saarland.de">
+          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <span>you@uni-saarland.de</span>
+        </a>
+        <a class="contact-item" href="https://yourprofile.github.io" target="_blank">
+          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          <span>github/yourhandle</span>
+        </a>
+        <a class="contact-item" href="tel:+49000000000">
+          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <span>+49 (0) 000 000 000</span>
+        </a>
+        <a class="contact-item" href="https://snnu.uni-saarland.de" target="_blank">
+          <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          <span>snnu.uni-saarland.de</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- BACK -->
+    <div class="back">
+      <img class="back-logo" src="assets/logo.png" alt="Systems Neuroscience and Neurotechnology Unit">
+    </div>
+
+  </div>
+</div>
+
+<p class="hint">SNNU · Saarland University &amp; HTW Saar</p>
+
+<!-- ══════════ PRINT-ONLY FLAT CARDS ══════════ -->
+
+<!-- Page 1: Front -->
+<div class="print-side print-front">
+  <div class="front-top">
+    <div class="front-top-left">
+      <div class="card-name">Your Name</div>
+      <div class="card-meta">
+        <div class="card-title">Ph.D. Student &middot; Research Associate</div>
+        <div class="card-institution">Saarland University &amp; HTW Saar</div>
+        <div class="card-dept">Systems Neuroscience &amp; Neurotechnology Unit</div>
+      </div>
+      <div class="card-research">
+        Affective computing, psychophysiological signal estimation &amp; neural biomarkers
+      </div>
+    </div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,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" alt="Instagram QR">
+    </div>
+  </div>
+  <div class="card-contacts">
+    <a class="contact-item" href="mailto:you@uni-saarland.de">
+      <svg class="contact-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <span>you@uni-saarland.de</span>
+    </a>
+    <a class="contact-item right" href="https://yourprofile.github.io">
+      <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      <span>github/yourhandle</span>
+    </a>
+    <a class="contact-item" href="tel:+49000000000">
+      <svg class="contact-icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      <span>+49 (0) 000 000 000</span>
+    </a>
+    <a class="contact-item right" href="https://snnu.uni-saarland.de">
+      <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      <span>snnu.uni-saarland.de</span>
+    </a>
+  </div>
+</div>
+
+<!-- Page 2: Back -->
+<div class="print-side print-back">
+  <img src="assets/logo.png" alt="Systems Neuroscience and Neurotechnology Unit">
+</div>
+
+</body>
+</html>
